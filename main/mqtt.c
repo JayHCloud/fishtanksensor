@@ -1,10 +1,11 @@
 #include "mqtt.h"
-#include "ledconfig.h"
-#include "watertemp.h"
-
-#define BROKER_URL SERVER_IP // Format: mqtt://XXX.XXX.X.XXX:1883
 
 
+
+
+#define BROKER_URL SERVER_IP //Example: mqtt://192.168.1.142:1883
+
+//Make variables/macros for topics
 
 static const char *TAG = "MQTT";
 
@@ -32,15 +33,15 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
     case MQTT_EVENT_CONNECTED:
         ESP_LOGI(TAG, "MQTT_EVENT_CONNECTED");
         //tells server that the device is on and connected
-        msg_id = esp_mqtt_client_publish(client, "/ds18s20/state", "On", 0, 1, 0);
+        msg_id = esp_mqtt_client_publish(client, "/tankesp32/state", "On", 0, 1, 0);
         ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
 
-        //topic for light toggle commands
-        msg_id = esp_mqtt_client_subscribe(client, "/ds18s20/light", 0);
+        //sub to topic for light toggle commands
+        msg_id = esp_mqtt_client_subscribe(client, "/tankesp32/light", 0);
         ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
     
-        //topic to send temperature to server
-        msg_id = esp_mqtt_client_subscribe(client, "/ds18s20/temp", 0);
+        //sub totopic to send temperature to server
+        msg_id = esp_mqtt_client_subscribe(client, "/tankesp32/temp", 0);
         ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
         break;
 
@@ -63,28 +64,32 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
     case MQTT_EVENT_DATA:
         ESP_LOGI(TAG, "MQTT_EVENT_DATA");
 
-        if (strncmp(event->topic, "/ds18s20/light", event->topic_len) == 0) { //if topic = /ds18s20/light
-            toggle_led();  // toggles LED on command
-            break;
-    } 
-        else if (strncmp(event->topic, "/ds18s20/temp ", event->topic_len) == 0) { //if topic = /ds18s20/temp
-            char floatStr[6];   //6 chars to fit temperature and null "78.25/0"
+         if ((strncmp(event->topic, "/tankesp32/temp ", event->topic_len) == 0) && (strncmp(event->data, "getTemp", event->data_len) == 0)){ 
+            char floatStr[16];   //6 chars min to fit temperature and null "78.25/0"
             float currentTemp = 0;
             currentTemp = ds18b20_get_temp();
             snprintf(floatStr, sizeof(floatStr), "%.2f", currentTemp); // %.2f for two decimal places
             floatStr[sizeof(floatStr) - 1] = '\0'; // Ensure null-termination
-            msg_id = esp_mqtt_client_publish(client, "/ds18s20/tempS", floatStr, 0, 0, 0); //sends to subtopic /tempS
+            msg_id = esp_mqtt_client_publish(client, "/tankesp32/temp", floatStr, 0, 0, 0); 
+            printf("Temp is: %f", currentTemp);  //Testing
             ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
+            print_string(floatStr);
             break;
+            } 
+         
+         else if ((strncmp(event->topic, "/tankesp32/light ", event->topic_len) == 0) && (strncmp(event->data, "toggleLight", event->data_len) == 0)){ 
 
-    }  
+            toggle_led();
+
+
+         }
+
+
          else {
             break;
 
-    }
-    break;
+            }
 
-        break;
     case MQTT_EVENT_ERROR:
         ESP_LOGI(TAG, "MQTT_EVENT_ERROR");
         if (event->error_handle->error_type == MQTT_ERROR_TYPE_TCP_TRANSPORT) {

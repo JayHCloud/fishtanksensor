@@ -137,9 +137,19 @@ float ds18b20_get_temp(void) {
         ds18b20_reset();
         float temp=0;
         temp=(float)(tempLSB+(tempMSB<<8))/16;
+        temp = temp*(1.8) + 32;  //See if there is way to pull farenheit from the device directly 
         return temp;
       }
       else{return 0;}
 
 
+}
+
+const char* ds18b20_get_temp_s(void){
+
+  static char tempStr[16];
+  float temp = ds18b20_get_temp();
+  snprintf(tempStr, sizeof(tempStr), "%.2f", temp);
+  tempStr[sizeof(tempStr) - 1] = '\0';
+  return tempStr;
 }

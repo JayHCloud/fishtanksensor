@@ -60,5 +60,6 @@ C:/Users/Jason/tanksensorrev3/build/esp-idf/perfmon/libperfmon.a
 C:/Users/Jason/tanksensorrev3/build/esp-idf/spiffs/libspiffs.a
 C:/Users/Jason/tanksensorrev3/build/esp-idf/wifi_provisioning/libwifi_provisioning.a
 C:/Users/Jason/tanksensorrev3/build/esp-idf/espressif__led_strip/libespressif__led_strip.a
+C:/Users/Jason/tanksensorrev3/build/esp-idf/espressif__ssd1306/libespressif__ssd1306.a
 C:/Users/Jason/tanksensorrev3/build/esp-idf/main/libmain.a
 C:/Users/Jason/tanksensorrev3/build/esp-idf/espressif_led_strip_2.4.3/libespressif_led_strip_2.4.3.a

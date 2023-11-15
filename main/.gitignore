@@ -6,3 +6,4 @@
 
 # Ignore a specific file
 env.h
+sdkconfig.h

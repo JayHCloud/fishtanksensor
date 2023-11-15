@@ -1,10 +1,10 @@
 
 #include "ledconfig.h"
 #define LED_STRIP_BLINK_GPIO  27
-#define LED_STRIP_LED_NUMBERS 5
-
+#define LED_STRIP_LED_NUMBERS 30
+    
 led_strip_handle_t led_strip = NULL;
-
+static bool is_on = false;
 
 led_strip_handle_t configure_led(void)
 {
@@ -24,31 +24,31 @@ led_strip_handle_t configure_led(void)
         .spi_bus = SPI2_HOST,           // SPI bus ID
     };
 
-    // LED Strip object handle
-    led_strip_handle_t led_strip;
-    led_strip_new_spi_device(&strip_config, &spi_config, &led_strip);
+    ESP_ERROR_CHECK(led_strip_new_spi_device(&strip_config, &spi_config, &led_strip));
     return led_strip;
+
 }
 
 
 
 void toggle_led()
 {
-    static bool led_on_off = false;
-        if (!led_on_off) {
 
-            for (int i = 0; i < LED_STRIP_LED_NUMBERS; i++) {
-                ESP_ERROR_CHECK(led_strip_set_pixel(led_strip, i, 5, 5, 250)); //The fish like blue and i do too
+        if (!is_on) {
+
+            for (int i = 4; i < LED_STRIP_LED_NUMBERS; i++) {
+                ESP_ERROR_CHECK(led_strip_set_pixel(led_strip, i, 15, 15, 255)); 
             }
 
             ESP_ERROR_CHECK(led_strip_refresh(led_strip));
-
-        } else {
+        } 
+        
+        else {
 
             ESP_ERROR_CHECK(led_strip_clear(led_strip));
-
+            ESP_ERROR_CHECK(led_strip_clear(led_strip));
         }
 
-        led_on_off = !led_on_off;
+        is_on = !is_on;
     
 }
