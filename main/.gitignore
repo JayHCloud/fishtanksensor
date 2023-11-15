@@ -1,8 +1,7 @@
 # Ignore a specific directory
-/.vscode/
-
-# Ignore a specific directory
-/.devcontainer/
+.vscode/
+.devcontainer/
+build/
 
 # Ignore a specific file
 env.h

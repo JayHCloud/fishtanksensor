@@ -63,7 +63,7 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
         break;
     case MQTT_EVENT_DATA:
         ESP_LOGI(TAG, "MQTT_EVENT_DATA");
-
+            //Create function to do this
          if ((strncmp(event->topic, "/tankesp32/temp ", event->topic_len) == 0) && (strncmp(event->data, "getTemp", event->data_len) == 0)){ 
             char floatStr[16];   //6 chars min to fit temperature and null "78.25/0"
             float currentTemp = 0;

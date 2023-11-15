@@ -1,5 +1,4 @@
 # Ignore a specific directory
-/.vscode/
-
-# Ignore a specific directory
-/.devcontainer/
+.vscode/
+build/
+.devcontainer/
