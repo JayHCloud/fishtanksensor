@@ -5,7 +5,6 @@
 
 #define BROKER_URL SERVER_IP //Example: mqtt://192.168.1.142:1883
 
-//Make variables/macros for topics
 
 static const char *TAG = "MQTT";
 
