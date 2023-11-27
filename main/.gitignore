@@ -4,5 +4,5 @@
 build/
 
 # Ignore a specific file
-env.h
-sdkconfig.h
+include/env.h
+include/sdkconfig.h
