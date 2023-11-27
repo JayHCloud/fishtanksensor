@@ -1,5 +1,5 @@
+#include "include/ledconfig.h"
 
-#include "ledconfig.h"
 #define LED_STRIP_BLINK_GPIO  27
 #define LED_STRIP_LED_NUMBERS 30
     

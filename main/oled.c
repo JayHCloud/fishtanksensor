@@ -1,6 +1,6 @@
 #include <stdio.h>
-#include "oled.h"
-#include "mqtt.h"
+#include "include/oled.h"
+#include "include/mqtt.h"
 
 #define I2C_MASTER_SCL_IO 26        /*!< gpio number for I2C master clock */
 #define I2C_MASTER_SDA_IO 25        /*!< gpio number for I2C master data  */
