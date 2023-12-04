@@ -4,7 +4,9 @@
 //spinlock
 static portMUX_TYPE ds18b20_spinlock = portMUX_INITIALIZER_UNLOCKED;
 
-
+float tempFloat;
+char tempStr[16];
+char *tempStrPtr = NULL;
 
 // Device Commands
 #define READSCRATCH     0xBE  // Read from scratchpad
@@ -24,7 +26,7 @@ static portMUX_TYPE ds18b20_spinlock = portMUX_INITIALIZER_UNLOCKED;
 #define TEMP_11_BIT 0x5F // 11 bit
 #define TEMP_12_BIT 0x7F // 12 bit Default
 
-//uint8_t DS_GPIO;
+
 uint8_t init=0;
 uint8_t bitResolution=12;
 uint8_t devices=0;
@@ -39,7 +41,7 @@ esp_err_t ds18b20_init(int GPIO) {
 
 
 esp_err_t ds18b20_reset(void){
-    esp_err_t ping = ESP_OK;
+    esp_err_t ret = ESP_OK;
 	gpio_set_direction(DS_GPIO, GPIO_MODE_OUTPUT);
   taskENTER_CRITICAL(&ds18b20_spinlock);
 	gpio_set_level(DS_GPIO, 0);
@@ -49,16 +51,15 @@ esp_err_t ds18b20_reset(void){
 	esp_rom_delay_us(70);
 	if (gpio_get_level(DS_GPIO) != 0)
         {
-            ping = ESP_ERR_TIMEOUT;
+            ret = ESP_ERR_TIMEOUT;
         }
   taskEXIT_CRITICAL(&ds18b20_spinlock);      
 	esp_rom_delay_us(410);
-	return (ping);
+	return (ret);
 }
 
 
-//  https://www.analog.com/en/technical-articles/1wire-communication-through-software.html
-//  Recommended timings for one wire communication 
+//  https://www.analog.com/en/technical-articles/1wire-communication-through-software.html     Recommended timings for one wire communication 
 
 void ds18b20_write(char bit){
 	if (bit & 1) {
@@ -138,18 +139,25 @@ float ds18b20_get_temp(void) {
         float temp=0;
         temp=(float)(tempLSB+(tempMSB<<8))/16;
         temp = temp*(1.8) + 32;  //See if there is way to pull farenheit from the device directly 
+        tempFloat = temp; //Maybe useless let me cook
         return temp;
       }
-      else{return 0;}
+      else{return 666;}  //Temp is 666 if reset fails, for testing
 
 
 }
 
 const char* ds18b20_get_temp_s(void){
 
-  static char tempStr[16];
   float temp = ds18b20_get_temp();
   snprintf(tempStr, sizeof(tempStr), "%.2f", temp);
-  tempStr[sizeof(tempStr) - 1] = '\0';
-  return tempStr;
+  tempStrPtr = tempStr;
+  return tempStrPtr;     //do i even need to return anything at this point?
+}
+
+void ds18b20_send_mqtt(void){
+
+  ds18b20_get_temp_s();
+  sendMqttTemp(tempStrPtr);
+
 }

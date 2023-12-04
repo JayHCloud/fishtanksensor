@@ -1,12 +1,11 @@
 #include "include/mqtt.h"
 
-
-
-
 #define BROKER_URL SERVER_IP //Example: mqtt://192.168.1.142:1883
 
-
 static const char *TAG = "MQTT";
+
+esp_mqtt_client_handle_t client;
+
 
 
 static void log_error_if_nonzero(const char *message, int error_code)
@@ -16,9 +15,30 @@ static void log_error_if_nonzero(const char *message, int error_code)
     }
 }
 
-/*
-Event handler that istens for commands from server
- */
+void mqtt_app_start(void)
+{
+    esp_mqtt_client_config_t mqtt_cfg = {
+        .broker.address.uri = BROKER_URL,
+    };
+
+
+    client = esp_mqtt_client_init(&mqtt_cfg);
+    esp_mqtt_client_register_event(client, ESP_EVENT_ANY_ID, mqtt_event_handler, NULL);   
+    esp_mqtt_client_start(client);
+}
+
+
+
+
+void sendMqttTemp(char *str){
+    int msg_id = esp_mqtt_client_publish(client, "/tankesp32/temp", str, 0, 0, 0); 
+    ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
+
+}
+
+
+//Event handler that istens for commands from server
+
 static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_t event_id, void *event_data)
 {
     ESP_LOGD(TAG, "Event dispatched from event loop base=%s, event_id=%" PRIi32 "", base, event_id);
@@ -62,32 +82,21 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
         break;
     case MQTT_EVENT_DATA:
         ESP_LOGI(TAG, "MQTT_EVENT_DATA");
-            //Create function to do this
+            //If topic is /tankesp32/temp and message is getTemp
          if ((strncmp(event->topic, "/tankesp32/temp ", event->topic_len) == 0) && (strncmp(event->data, "getTemp", event->data_len) == 0)){ 
-            char floatStr[16];   //6 chars min to fit temperature and null "78.25/0"
-            float currentTemp = 0;
-            currentTemp = ds18b20_get_temp();
-            snprintf(floatStr, sizeof(floatStr), "%.2f", currentTemp); // %.2f for two decimal places
-            floatStr[sizeof(floatStr) - 1] = '\0'; // Ensure null-termination
-            msg_id = esp_mqtt_client_publish(client, "/tankesp32/temp", floatStr, 0, 0, 0); 
-            printf("Temp is: %f", currentTemp);  //Testing
-            ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
-            print_string(floatStr);
+            ds18b20_send_mqtt();
             break;
-            } 
-         
+        } 
+            //If topic is /tankesp32/light and message is toggleLight
          else if ((strncmp(event->topic, "/tankesp32/light ", event->topic_len) == 0) && (strncmp(event->data, "toggleLight", event->data_len) == 0)){ 
-
             toggle_led();
-
-
-         }
-
+            break;
+        }
 
          else {
             break;
 
-            }
+        }
 
     case MQTT_EVENT_ERROR:
         ESP_LOGI(TAG, "MQTT_EVENT_ERROR");
@@ -105,16 +114,5 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
     }
 }
 
-void mqtt_app_start(void)
-{
-    esp_mqtt_client_config_t mqtt_cfg = {
-        .broker.address.uri = BROKER_URL,
-    };
-
-
-    esp_mqtt_client_handle_t client = esp_mqtt_client_init(&mqtt_cfg);
-    esp_mqtt_client_register_event(client, ESP_EVENT_ANY_ID, mqtt_event_handler, NULL);   
-    esp_mqtt_client_start(client);
-}
 
 

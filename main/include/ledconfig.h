@@ -11,3 +11,6 @@
 void toggle_led(void);
 led_strip_handle_t configure_led(void);
 void configureStrip(void);
+void ledBlue(void);
+void ledRed(void);
+void ledOff(void);

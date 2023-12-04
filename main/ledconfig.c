@@ -1,7 +1,7 @@
 #include "include/ledconfig.h"
 
 #define LED_STRIP_BLINK_GPIO  27
-#define LED_STRIP_LED_NUMBERS 30
+#define LED_STRIP_LED_NUMBERS 50
     
 led_strip_handle_t led_strip = NULL;
 static bool is_on = false;
@@ -31,24 +31,48 @@ led_strip_handle_t configure_led(void)
 
 
 
-void toggle_led()
+void toggle_led() //toggles on/off in blue color
 {
 
         if (!is_on) {
 
-            for (int i = 4; i < LED_STRIP_LED_NUMBERS; i++) {
-                ESP_ERROR_CHECK(led_strip_set_pixel(led_strip, i, 15, 15, 255)); 
+            for (int i = 0; i < LED_STRIP_LED_NUMBERS; i++) {
+                ESP_ERROR_CHECK(led_strip_set_pixel(led_strip, i, 5, 5, 255)); 
             }
-
             ESP_ERROR_CHECK(led_strip_refresh(led_strip));
         } 
         
         else {
 
             ESP_ERROR_CHECK(led_strip_clear(led_strip));
-            ESP_ERROR_CHECK(led_strip_clear(led_strip));
         }
 
         is_on = !is_on;
     
 }
+
+
+void ledBlue(){
+    for (int i = 0; i < LED_STRIP_LED_NUMBERS; i++) {
+        ESP_ERROR_CHECK(led_strip_set_pixel(led_strip, i, 5, 5, 255)); 
+        }
+        ESP_ERROR_CHECK(led_strip_refresh(led_strip));
+    is_on = true;
+
+}
+
+void ledRed(){
+    for (int i = 0; i < LED_STRIP_LED_NUMBERS; i++) {
+        ESP_ERROR_CHECK(led_strip_set_pixel(led_strip, i, 255, 5, 5)); 
+        }
+        ESP_ERROR_CHECK(led_strip_refresh(led_strip));
+    is_on = true;
+
+}
+
+void ledOff(){
+    ESP_ERROR_CHECK(led_strip_clear(led_strip));
+    is_on = false; 
+}
+
+
