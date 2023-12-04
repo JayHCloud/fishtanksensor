@@ -13,8 +13,8 @@ static float tempGap = 0;
 
 
 
-#define tempAlarm      (1 << 0)   // Bit 0 for temperature alarm
-#define toggleLight    (1 << 1)   // Bit 1 for toggle light signal
+//#define tempAlarm      (1 << 0)    Bit 0 for temperature alarm
+//#define toggleLight    (1 << 1)    Bit 1 for toggle light signal
 
 
 EventGroupHandle_t tasksGroup;
@@ -60,7 +60,6 @@ void tempTask(void *arg)
         }
 
         count++;
-        esp_task_wdt_reset();
         vTaskDelay(30000 / portTICK_PERIOD_MS); //Block task 30 Sec
         }
 
@@ -73,7 +72,6 @@ void emergencyTask(void *arg)
 {
 
     while(1){
-        esp_task_wdt_reset();
         EventBits_t bits = xEventGroupWaitBits(tasksGroup, tempAlarm, false, true, portMAX_DELAY);
 
         if ((bits & tempAlarm) != 0) {
@@ -81,7 +79,6 @@ void emergencyTask(void *arg)
 
             while((bits & tempAlarm) != 0){
                 bits = xEventGroupWaitBits(tasksGroup, tempAlarm, false, true, portMAX_DELAY);
-                esp_task_wdt_reset();
             }
             ledOff();
         }
@@ -94,7 +91,6 @@ void toggleTask(void *arg)
 {
 
     while(1){
-        esp_task_wdt_reset();
         EventBits_t bits = xEventGroupWaitBits(tasksGroup, tempAlarm | toggleLight, false, true, portMAX_DELAY);
 
         if (((bits & tempAlarm) == 0) && ((bits & toggleLight) != 0)) {

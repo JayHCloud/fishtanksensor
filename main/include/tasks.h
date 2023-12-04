@@ -18,6 +18,8 @@ void tempTask(void *arg);
 void emergencyTask(void *arg);
 void toggleTask(void *arg);
 
+#define tempAlarm      (1 << 0)   // Bit 0 for temperature alarm
+#define toggleLight    (1 << 1)   // Bit 1 for toggle light signal
 
 /*
 toggleTask stack high watermark: 5844

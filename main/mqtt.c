@@ -89,7 +89,7 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
         } 
             //If topic is /tankesp32/light and message is toggleLight
          else if ((strncmp(event->topic, "/tankesp32/light ", event->topic_len) == 0) && (strncmp(event->data, "toggleLight", event->data_len) == 0)){ 
-            toggle_led();
+            xEventGroupSetBits(tasksGroup, tempAlarm);
             break;
         }
 

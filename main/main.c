@@ -20,7 +20,6 @@ void app_main(void)
     xTaskCreatePinnedToCore(emergencyTask, "EmergencyTask", TASK_STACK_SIZE, NULL, 1, NULL, 1);
     xTaskCreatePinnedToCore(toggleTask, "ToggleTask", TASK_STACK_SIZE, NULL, 1, NULL, 1);
 
-    vTaskStartScheduler();
 
 
 

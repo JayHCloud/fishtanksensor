@@ -23,8 +23,7 @@
 #include "watertemp.h"
 #include "ledconfig.h"
 #include "connectwifi.h"
-
-
+#include "tasks.h"
 
 
 static void log_error_if_nonzero(const char *message, int error_code);
