@@ -1,8 +1,9 @@
 
 #include "include/mqtt.h"
 #include "include/tasks.h"
+#include "include/connectwifi.h"
+#include "include/ledconfig.h"
 
-#define TASK_STACK_SIZE 16000
 
 void app_main(void)
 {
@@ -11,19 +12,7 @@ void app_main(void)
     wifi_init_sta(); 
     mqtt_app_start(); 
     configure_led();  
-
-
-
-    tasksGroup = xEventGroupCreate();
-
-    xTaskCreatePinnedToCore(tempTask, "TempTask", TASK_STACK_SIZE, NULL, 1, NULL, 1);
-    xTaskCreatePinnedToCore(emergencyTask, "EmergencyTask", TASK_STACK_SIZE, NULL, 1, NULL, 1);
-    xTaskCreatePinnedToCore(toggleTask, "ToggleTask", TASK_STACK_SIZE, NULL, 1, NULL, 1);
-
-
-
-
-
+    tasksInit();
 
 }
 

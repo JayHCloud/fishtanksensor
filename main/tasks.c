@@ -11,13 +11,25 @@ static float currentTemp = 0;
 static float previousTemp = 0;
 static float tempGap = 0;
 
-
+#define TASK_STACK_SIZE 16000
 
 //#define tempAlarm      (1 << 0)    Bit 0 for temperature alarm
 //#define toggleLight    (1 << 1)    Bit 1 for toggle light signal
 
 
 EventGroupHandle_t tasksGroup;
+
+
+void tasksInit(){
+
+    tasksGroup = xEventGroupCreate();
+    xTaskCreatePinnedToCore(tempTask, "TempTask", TASK_STACK_SIZE, NULL, 1, NULL, 1);
+    xTaskCreatePinnedToCore(emergencyTask, "EmergencyTask", TASK_STACK_SIZE, NULL, 1, NULL, 1);
+    xTaskCreatePinnedToCore(toggleTask, "ToggleTask", TASK_STACK_SIZE, NULL, 1, NULL, 1);
+
+
+}
+
 
 void getTempGap(){
 
@@ -46,14 +58,14 @@ void tempTask(void *arg)
             count = 0;
         } 
 
-        if (tempGap >= 2 ){ //2 degrees difference in 30 seconds
+        if (tempGap >= 2.0 ){ //2 degrees difference in 30 seconds
 
             xEventGroupSetBits(tasksGroup, tempAlarm);
             
         }
 
         
-        if (tempGap < 2 ){
+        if (tempGap < 2.0 ){
 
             xEventGroupClearBits(tasksGroup, tempAlarm);
             
