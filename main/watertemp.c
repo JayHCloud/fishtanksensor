@@ -4,7 +4,6 @@
 //spinlock
 static portMUX_TYPE ds18b20_spinlock = portMUX_INITIALIZER_UNLOCKED;
 
-float tempFloat;
 char tempStr[16];
 char *tempStrPtr = NULL;
 
@@ -139,11 +138,9 @@ float ds18b20_get_temp(void) {
         float temp=0;
         temp=(float)(tempLSB+(tempMSB<<8))/16;
         temp = temp*(1.8) + 32;  //See if there is way to pull farenheit from the device directly 
-        tempFloat = temp; //Maybe useless let me cook
         return temp;
       }
-      else{return 666;}  //Temp is 666 if reset fails, for testing
-
+      else{return 0;}  //Temp is 0 if reset fails so getTempGap wont run. no response is a terrible error method. maybe it changfes a diff colour on error? maybe i bring the oled back
 
 }
 
@@ -152,7 +149,7 @@ const char* ds18b20_get_temp_s(void){
   float temp = ds18b20_get_temp();
   snprintf(tempStr, sizeof(tempStr), "%.2f", temp);
   tempStrPtr = tempStr;
-  return tempStrPtr;     //do i even need to return anything at this point?
+  return tempStrPtr;     
 }
 
 void ds18b20_send_mqtt(void){

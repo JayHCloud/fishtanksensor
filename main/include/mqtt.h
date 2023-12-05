@@ -22,7 +22,7 @@
 
 #include "watertemp.h"
 #include "ledconfig.h"
-#include "connectwifi.h"
+#include "connectwifi.h"  //maybe should have camelcase or _, pick one >:|
 #include "tasks.h"
 
 

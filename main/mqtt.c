@@ -30,7 +30,7 @@ void mqtt_app_start(void)
 
 
 
-void sendMqttTemp(char *str){
+void sendMqttTemp(char *str){ //Should this func really be in this file
     int msg_id = esp_mqtt_client_publish(client, "/tankesp32/temp", str, 0, 0, 0); 
     ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
 
@@ -84,12 +84,12 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
         ESP_LOGI(TAG, "MQTT_EVENT_DATA");
             //If topic is /tankesp32/temp and message is getTemp
          if ((strncmp(event->topic, "/tankesp32/temp ", event->topic_len) == 0) && (strncmp(event->data, "getTemp", event->data_len) == 0)){ 
-            ds18b20_send_mqtt();
+             xEventGroupSetBits(tasksGroup, takeTemperature);
             break;
         } 
             //If topic is /tankesp32/light and message is toggleLight
          else if ((strncmp(event->topic, "/tankesp32/light ", event->topic_len) == 0) && (strncmp(event->data, "toggleLight", event->data_len) == 0)){ 
-            xEventGroupSetBits(tasksGroup, tempAlarm);
+            xEventGroupSetBits(tasksGroup, toggleLight);
             break;
         }
 

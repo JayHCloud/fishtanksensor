@@ -15,15 +15,9 @@ void getTempGap(void);
 
 void tasksInit();
 void tempTask(void *arg);
-void emergencyTask(void *arg);
-void toggleTask(void *arg);
+void apiTask(void *arg);
 
 
-#define tempAlarm      (1 << 0)   // Bit 0 for temperature alarm
-#define toggleLight    (1 << 1)   // Bit 1 for toggle light signal
-
-/*
-toggleTask stack high watermark: 5844
-tempTask stack high watermark: 5852
-emergencyTask stack high watermark: 5848
-*/
+#define tempAlarm          (1 << 0)   // Bit 0 for temperature alarm
+#define toggleLight        (1 << 1)   // Bit 1 for toggle light signal
+#define takeTemperature    (1 << 2)   // Bit 2 for mqtt tempature request
