@@ -6,6 +6,8 @@ static portMUX_TYPE ds18b20_spinlock = portMUX_INITIALIZER_UNLOCKED;
 
 char tempStr[16];
 char *tempStrPtr = NULL;
+float tempFloat = 0;
+ 
 
 // Device Commands
 #define READSCRATCH     0xBE  // Read from scratchpad
@@ -135,26 +137,36 @@ float ds18b20_get_temp(void) {
         tempLSB=ds18b20_read_byte();
         tempMSB=ds18b20_read_byte();
         ds18b20_reset();
-        float temp=0;
-        temp=(float)(tempLSB+(tempMSB<<8))/16;
-        temp = temp*(1.8) + 32;  //See if there is way to pull farenheit from the device directly 
-        return temp;
+        tempFloat=(float)(tempLSB+(tempMSB<<8))/16;
+        tempFloat = tempFloat*(1.8) + 32;  //See if there is way to pull farenheit from the device directly 
+        return tempFloat;
       }
-      else{return 0;}  //Temp is 0 if reset fails so getTempGap wont run. no response is a terrible error method. maybe it changfes a diff colour on error? maybe i bring the oled back
+      else{return 0;}  //Temp is 0 if reset fails so getTempGap wont run. no response is probably a terrible error . maybe it changfes a diff colour on error? maybe i bring the oled back
 
 }
+
+
+
+
+//"Public" Functions. Ptr return prevent the tasks from switching too soon and ruining the data. 
 
 const char* ds18b20_get_temp_s(void){
 
   float temp = ds18b20_get_temp();
   snprintf(tempStr, sizeof(tempStr), "%.2f", temp);
   tempStrPtr = tempStr;
-  return tempStrPtr;     
+  return tempStrPtr;          //simplify?
 }
 
 void ds18b20_send_mqtt(void){
 
   ds18b20_get_temp_s();
   sendMqttTemp(tempStrPtr);
+
+}
+
+float* ds18b20_get_temp_ptr(void){
+      ds18b20_get_temp();
+      return &tempFloat;
 
 }

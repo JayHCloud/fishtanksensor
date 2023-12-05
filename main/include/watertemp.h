@@ -24,3 +24,4 @@ unsigned char ds18b20_read_byte(void);
 float ds18b20_get_temp(void);
 const char* ds18b20_get_temp_s(void);
 void ds18b20_send_mqtt(void);
+float* ds18b20_get_temp_ptr(void);
