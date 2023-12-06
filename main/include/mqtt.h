@@ -28,6 +28,6 @@
 
 static void log_error_if_nonzero(const char *message, int error_code);
 void mqtt_app_start(void);
-void sendMqttTemp(char *str);
+void send_mqtt_temp(char *str);
 static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_t event_id, void *event_data);
 

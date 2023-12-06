@@ -161,7 +161,7 @@ const char* ds18b20_get_temp_s(void){
 void ds18b20_send_mqtt(void){
 
   ds18b20_get_temp_s();
-  sendMqttTemp(tempStrPtr);
+  send_mqtt_temp(tempStrPtr);
 
 }
 

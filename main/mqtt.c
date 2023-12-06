@@ -30,7 +30,7 @@ void mqtt_app_start(void)
 
 
 
-void sendMqttTemp(char *str){ //make this function more generic, for different topics or..
+void send_mqtt_temp(char *str){ //make this function more generic, for different topics or..
     int msg_id = esp_mqtt_client_publish(client, "/tankesp32/temp", str, 0, 0, 0); 
     ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
 

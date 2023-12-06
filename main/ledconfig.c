@@ -52,7 +52,7 @@ void toggle_led() //toggles on/off in blue color
 }
 
 
-void ledBlue(){
+void led_blue(){
     for (int i = 0; i < LED_STRIP_LED_NUMBERS; i++) {
         ESP_ERROR_CHECK(led_strip_set_pixel(led_strip, i, 5, 5, 255)); 
         }
@@ -61,7 +61,7 @@ void ledBlue(){
 
 }
 
-void ledRed(){
+void led_red(){
     for (int i = 0; i < LED_STRIP_LED_NUMBERS; i++) {
         ESP_ERROR_CHECK(led_strip_set_pixel(led_strip, i, 255, 5, 5)); 
         }
@@ -70,7 +70,7 @@ void ledRed(){
 
 }
 
-void ledOff(){
+void led_off(){
     ESP_ERROR_CHECK(led_strip_clear(led_strip));
     is_on = false; 
 }

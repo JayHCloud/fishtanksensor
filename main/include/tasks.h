@@ -11,13 +11,12 @@
 
 extern EventGroupHandle_t tasksGroup;
 
-void getTempGap(void);
+void temp_task(void *arg); 
+void api_task(void *arg);   
 
-void tasksInit();
-void tempTask(void *arg); 
-void apiTask(void *arg);   
-void getTempGap(); //Subtracts current temp from average and returns the absolute value of the difference
-void getAverageTemp(float value); //Uses
+void tasks_init(void);
+void get_temp_gap(void); //Subtracts current temp from average and returns the absolute value of the difference
+void get_average_temp(float value); //Uses
 
 
 #define tempAlarm          (1 << 0)   // Bit 0 for temperature alarm

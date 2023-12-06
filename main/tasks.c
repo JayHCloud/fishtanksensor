@@ -19,18 +19,18 @@ static float averageTemp = 0;
 
 
 
-void tasksInit(){ 
+void tasks_init(){ 
 
     tasksGroup = xEventGroupCreate();
-    xTaskCreatePinnedToCore(tempTask, "TempTask", TASK_STACK_SIZE, NULL, 1, NULL, 1);
-    xTaskCreatePinnedToCore(apiTask, "apiTask", TASK_STACK_SIZE, NULL, 1, NULL, 1);
+    xTaskCreatePinnedToCore(temp_task, "temp_task", TASK_STACK_SIZE, NULL, 1, NULL, 1);
+    xTaskCreatePinnedToCore(api_task, "api_task", TASK_STACK_SIZE, NULL, 1, NULL, 1);
 
 
 }
 
 
 
-void tempTask(void *arg) {      //Will only be red for 30sec before the next reading normalizes it. So only good for quick +-2 water tests unless i keep a larger/wider pool of #'s to get an average
+void temp_task(void *arg) {      //Will only be red for 30sec before the next reading normalizes it. So only good for quick +-2 water tests unless i keep a larger/wider pool of #'s to get an average
 
     static int count = 0;
     while (1) {
@@ -38,9 +38,8 @@ void tempTask(void *arg) {      //Will only be red for 30sec before the next rea
 
         previousTemp = currentTemp;
         currentTemp = *(ds18b20_get_temp_ptr());
-    //    vTaskDelay(1000 / portTICK_PERIOD_MS); //give sensor time to respond sensor takes 750 ms
-        getAverageTemp(currentTemp);
-        getTempGap();
+        get_average_temp(currentTemp);
+        get_temp_gap();
 
         if (count >= 10 ) {
             ds18b20_send_mqtt();
@@ -49,11 +48,11 @@ void tempTask(void *arg) {      //Will only be red for 30sec before the next rea
 
         if ((tempGap >= 2) && !(bits && tempAlarm)) { //Sets alarm bit and turns led red
             xEventGroupSetBits(tasksGroup, tempAlarm);
-            ledRed();
+            led_red();
         }
 
         if (tempGap < 2 && (bits & tempAlarm))  {  //Unsets alarm bit and turns led off
-            ledOff();
+            led_off();
             xEventGroupClearBits(tasksGroup, tempAlarm);
         }
         count++;
@@ -62,7 +61,7 @@ void tempTask(void *arg) {      //Will only be red for 30sec before the next rea
 }
 
 
-void apiTask(void *arg)
+void api_task(void *arg)
 {
 
     while(1){
@@ -84,9 +83,9 @@ void apiTask(void *arg)
 }
 
 
-void getTempGap(){
+void get_temp_gap(){
 
-    if(( currentTemp !=0) && (averageTemp !=0)){ //If called in correct order, do i need to check for average temp != 0?
+    if(( currentTemp !=0) && (averageTemp !=0)){ 
         tempGap = currentTemp - averageTemp;
         tempGap = (tempGap < 0) ? -tempGap : tempGap;
     }
@@ -97,7 +96,7 @@ void getTempGap(){
 
 
 // Maintains the running average for emergency alarm
-void getAverageTemp(float value) {
+void get_average_temp(float value) {
     static float valueBuffer[BUFFER_SIZE] = {0};  //buffer to store values
     static float runningSum = 0;
     static bool is_init = false;
