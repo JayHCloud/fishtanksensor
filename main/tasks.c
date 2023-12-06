@@ -9,10 +9,10 @@ TaskHandle_t tempTaskHandle = NULL;
 TaskHandle_t emergencyTaskHandle = NULL;
 TaskHandle_t apiTaskHandle = NULL;
 
-static float currentTemp = 0;
-static float previousTemp = 0;
-static float tempGap = 0;
-static float averageTemp = 0;
+static float currentTemp = 0;  //hide in task/func so not shared
+static float previousTemp = 0;   //hide in task/func
+static float tempGap = 0; //hide this in func so not shared and make it return t/f if out of bounds
+static float averageTemp = 0;   //hide in task/func
 
 #define TASK_STACK_SIZE 16000 // Arbitrarily bigger than the stack high watermark of 7k i measured. 
 #define BUFFER_SIZE 20
@@ -97,7 +97,8 @@ void get_temp_gap(){
 
 // Maintains the running average for emergency alarm
 void get_average_temp(float value) {
-    static float valueBuffer[BUFFER_SIZE] = {0};  //buffer to store values
+
+    static float valueBuffer[BUFFER_SIZE] = {0}; 
     static float runningSum = 0;
     static bool is_init = false;
     static int index = 0;  
@@ -108,7 +109,6 @@ void get_average_temp(float value) {
     runningSum -= valueBuffer[index];
     valueBuffer[index] = value; 
     runningSum += value; 
-    // Calculate the weighted average
     averageTemp = runningSum / (BUFFER_SIZE);
     }
 
